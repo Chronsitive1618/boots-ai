@@ -1,6 +1,7 @@
 import os, sys
 from dotenv import load_dotenv
-from google import genai, types
+from google import genai
+from google.genai import types
 
 load_dotenv()
 api_key = os.environ.get("GEMINI_API_KEY")
@@ -22,6 +23,12 @@ response = client.models.generate_content(
     contents=messages,
 )
 
+prompt_tokens = response.usage_metadata.prompt_token_count
+response_tokens = response.usage_metadata.candidates_token_count
+
+if "--verbose" in sys.argv:
+    print(
+        f"User prompt: {user_prompt} \n Prompt tokens: {prompt_tokens} \n Response tokens: {response_tokens}"
+    )
+
 print(response.text)
-print(f"Prompt tokens: {response.usage_metadata.prompt_token_count}")
-print(f"Response tokens: {response.usage_metadata.candidates_token_count}")
